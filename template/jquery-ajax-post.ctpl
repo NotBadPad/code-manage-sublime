@@ -1,0 +1,8 @@
+$.post("/product/product_search_list", {
+		searchKey: searchKey
+	}, function(data) {
+		
+	},
+	"json");
+
+

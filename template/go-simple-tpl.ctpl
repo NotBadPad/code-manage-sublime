@@ -1,0 +1,20 @@
+package models
+
+/**
+ * {{username}}
+ * create date: {{date}}
+ */
+
+import (
+	""
+)
+
+type XXX struct {
+
+}
+
+func XXX(){
+	
+}
+
+

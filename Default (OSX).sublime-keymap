@@ -1,0 +1,11 @@
+[{
+	"command": "code_tpl_add",
+	"keys": [
+		"ctrl+alt+]"
+	]
+}, {
+	"command": "code_tpl_insert",
+	"keys": [
+		"ctrl+alt+["
+	]
+}]
