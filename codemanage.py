@@ -3,6 +3,10 @@ import sublime, sublime_plugin
 import os
 import os.path
 import time
+import sys
+
+reload(sys)   
+sys.setdefaultencoding('utf8')
 
 #写入模板，如果是新模板按照模板名创建一个文件，如果是旧模板则覆盖写原文件
 class CodeTplAddCommand(sublime_plugin.TextCommand):
@@ -28,8 +32,11 @@ class CodeTplAddCommand(sublime_plugin.TextCommand):
 			path = os.path.join(sublime.packages_path(),"CodeManage","template",name+".ctpl")
 			try:
 				f = open(path, 'w')
+				print selstr
+				selstr.encode("gbk")
 				f.write(selstr)
 			except Exception, e:
+				print e
 				sublime.message_dialog("Write template file fail:"+str(e))
 				return
 			finally:

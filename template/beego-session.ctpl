@@ -1,0 +1,20 @@
+package utils
+
+import (
+	"github.com/astaxie/beego/session"
+)
+
+var GlobalSessions *session.Manager
+
+func init() {
+	GlobalSessions, _ = session.NewManager("memory", `{"cookieName":"gosessionid", "enableSetCookie,omitempty": true, "gclifetime":3600, "maxLifetime": 3600, "secure": false, "sessionIDHashFunc": "sha1", "sessionIDHashKey": "", "cookieLifeTime": 3600, "providerConfig": ""}`)
+	go GlobalSessions.GC()
+}
+
+/**
+ * user
+ * session := utils.GlobalSessions.SessionStart(ctx.ResponseWriter, ctx.Request)
+ * defer session.SessionRelease(ctx.ResponseWriter)
+ * userName := session.Get("userName")
+ * session.Set("userName", userName)
+ */

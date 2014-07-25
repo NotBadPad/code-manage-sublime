@@ -1,0 +1,38 @@
+package utils
+
+/*
+  Golang使用Oracle连接目前只能通过oci8提供的开放接口，
+  通过测试，连接在并发routines执行下会出现问题，为解决此类问题，目前通过设置池中单连接来解决
+*/
+
+import (
+	"database/sql"
+	"github.com/astaxie/beego"
+	_ "github.com/mattn/go-oci8"
+	"os"
+)
+
+var (
+	odsn          string
+	omaxIdleConns int
+	omaxActives   int
+)
+
+var ODB *sql.DB
+
+func OpenOracle() (db *sql.DB, err error) {
+	os.Setenv("NLS_LANG", "SIMPLIFIED CHINESE_CHINA.UTF8")
+	db, err = sql.Open("oci8", odsn)
+	if db != nil {
+		//db.SetMaxIdleConns(omaxIdleConns)
+		db.SetMaxOpenConns(1) //fixed oci8 bug
+	}
+	return
+}
+
+func init() {
+	odsn = beego.AppConfig.String("oracle.dsn")
+	//omaxIdleConns, _ = beego.AppConfig.Int("oracle.maxIdleConns")
+	//omaxActives, _ = beego.AppConfig.Int("oracle.maxActives")
+}
+
