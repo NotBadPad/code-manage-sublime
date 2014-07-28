@@ -107,8 +107,8 @@ def ReplaceVar(content):
 			value = line.split("=")
 			varmap["{{"+value[0]+"}}"] = value[1]
 	except Exception, e:
-		sublime.message_dialog("Open var-map file fail:"+str(e))
-		return
+		sublime.message_dialog("Open var-map file fail:"+str(e)) #这里如果打开配置文件失败，则不进行替换操作
+		return content
 	finally:
 		f.close()
 	
