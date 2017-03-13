@@ -4,9 +4,8 @@ import os
 import os.path
 import time
 import sys
-
-reload(sys)   
-sys.setdefaultencoding('utf8')
+from imp import reload
+reload(sys)
 
 #写入模板，如果是新模板按照模板名创建一个文件，如果是旧模板则覆盖写原文件
 class CodeTplAddCommand(sublime_plugin.TextCommand):
@@ -29,14 +28,13 @@ class CodeTplAddCommand(sublime_plugin.TextCommand):
 				sublime.message_dialog("Template name is empty.")
 				return
 			#写入文件
-			path = os.path.join(sublime.packages_path(),"CodeManage","template",name+".ctpl")
+			path = os.path.join(sublime.packages_path(),"code-manage-sublime","template",name+".ctpl")
 			try:
 				f = open(path, 'w')
-				print selstr
-				selstr.encode("gbk")
+				print (selstr)
 				f.write(selstr)
-			except Exception, e:
-				print e
+			except Exception as e:
+				print (e)
 				sublime.message_dialog("Write template file fail:"+str(e))
 				return
 			finally:
@@ -55,11 +53,13 @@ class CodeTplAddCommand(sublime_plugin.TextCommand):
 class CodeTplInsertCommand(sublime_plugin.TextCommand):
 	def run(self,edit):
 		filenames = []
-		rootdir= os.path.join(sublime.packages_path(),"CodeManage","template")
+		rootdir= os.path.join(sublime.packages_path(),"code-manage-sublime","template")
 		for p,d,files in os.walk(rootdir):
 			filenames = files
 
-		def on_sel_done(selvalue):
+
+		def on_done(selvalue):
+			self.view.insert(edit, 0,filenames[0])
 			if selvalue==-1:
 				return
 			filename = filenames[selvalue]
@@ -68,28 +68,30 @@ class CodeTplInsertCommand(sublime_plugin.TextCommand):
 			if filename=='':
 				sublime.message_dialog("Template is not exist.")
 				return
-			path = os.path.join(sublime.packages_path(),"CodeManage","template",filename)
+			path = os.path.join(sublime.packages_path(),"code-manage-sublime","template",filename)
 
 			try:
-				f =  open(path, 'r')
+				f =  open(path, 'r', encoding='utf-8')
 				content = f.read()
 				if content=='':
 					sublime.message_dialog("Template file is empty")
 					return
 				content = ReplaceVar(content)
-			except Exception, e:
+			except Exception as e:
 				sublime.message_dialog("Open template file fail:"+str(e))
 				return
 			finally:
 				f.close()
 			
 			#把内容插入当前位置
-			sels = self.view.sel()
-			for sel in sels:
-				self.view.insert(edit,sel.begin(),content)
+
+			# sels = self.view.sel()
+			# for sel in sels:
+			# 	print (edit)
+			# 	self.view.insert(edit, sel.begin(),content)
 
 		#打开选择列表
-		self.view.window().show_quick_panel(filenames,on_sel_done)
+		self.view.window().show_quick_panel(filenames,on_done)
 
 #处理一些模板替换变量
 #将模板中{{XXX}}的变量替换成配置文件中的变量({{data}}等信息直接替换)
@@ -99,14 +101,14 @@ def ReplaceVar(content):
 	}
 	#读取变量
 	try:
-		path = os.path.join(sublime.packages_path(),"CodeManage","var-map.conf")
+		path = os.path.join(sublime.packages_path(),"code-manage-sublime","var-map.conf")
 		f =  open(path, 'r')
 		for line in f.readlines():
 			if line=='':
 				continue
 			value = line.split("=")
 			varmap["{{"+value[0]+"}}"] = value[1]
-	except Exception, e:
+	except Exception as e:
 		sublime.message_dialog("Open var-map file fail:"+str(e)) #这里如果打开配置文件失败，则不进行替换操作
 		return content
 	finally:
