@@ -59,7 +59,6 @@ class CodeTplInsertCommand(sublime_plugin.TextCommand):
 
 
 		def on_done(selvalue):
-			self.view.insert(edit, 0,filenames[0])
 			if selvalue==-1:
 				return
 			filename = filenames[selvalue]
@@ -84,11 +83,9 @@ class CodeTplInsertCommand(sublime_plugin.TextCommand):
 				f.close()
 			
 			#把内容插入当前位置
-
-			# sels = self.view.sel()
-			# for sel in sels:
-			# 	print (edit)
-			# 	self.view.insert(edit, sel.begin(),content)
+			sels = self.view.sel()
+			for sel in sels:
+				self.view.run_command("insert", {"characters": content})
 
 		#打开选择列表
 		self.view.window().show_quick_panel(filenames,on_done)
